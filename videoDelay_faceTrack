@@ -33,7 +33,7 @@ void draw() {
     Rectangle[] faces = opencv.detect();
 
     if (faces.length > 0) {
-      faceX = int(map(faces[0].x, 0, 240, 0, nFrames-1));
+      faceX = int(map(faces[0].x, 0, w/2, 0, nFrames-1));
       println(faces[0].x + ", " + faceX);
       
       if (faceX != lastFaceX) {
