@@ -27,6 +27,7 @@ void draw() {
     mouse = int(map(mouseX, 0, width, 0, nFrames-1));
 
     if (mouse != lastMouse) {
+      //println(lastMouse + ", " + mouse);
       if (buffer[mouse] != null) {
         image(buffer[mouse], 0, 0);
         iRead = mouse;
@@ -39,15 +40,11 @@ void draw() {
       }
     }
     
-    iWrite++;
-    iRead++;
-    if (iRead >= nFrames-1) {
-      iRead = 0;
-    }
-    if (iWrite >= nFrames-1) {
-      iWrite = 0;
-    }
+    iWrite = (iWrite+1)%nFrames;
+    iRead = (iRead+1)%nFrames;
     lastMouse = mouse;
+    //println(mouseX + ", " + mouse);
+    
   }
 }
 
