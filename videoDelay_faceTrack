@@ -1,0 +1,64 @@
+import gab.opencv.*;
+import processing.video.*;
+import java.awt.*;
+
+Capture cam;
+OpenCV opencv;
+
+PImage[] buffer;
+int w = 640;
+int h = 480;
+int nFrames = 60;
+int iWrite = 0, iRead = 1;
+int faceX;
+int lastFaceX;
+
+void setup() {
+  size(w, h);
+  cam = new Capture(this, w/2, h/2);
+  opencv = new OpenCV(this, w/2, h/2);
+  opencv.loadCascade(OpenCV.CASCADE_FRONTALFACE);
+
+  cam.start();
+  buffer = new PImage[nFrames];
+}
+
+void draw() {
+  scale(2);
+  if (cam.available()) {
+    cam.read();
+    buffer[iWrite] = cam.get();
+    opencv.loadImage(cam);
+
+    Rectangle[] faces = opencv.detect();
+
+    if (faces.length > 0) {
+      faceX = int(map(faces[0].x, 0, 240, 0, nFrames-1));
+      println(faces[0].x + ", " + faceX);
+      
+      if (faceX != lastFaceX) {
+        if (buffer[faceX] != null) {
+          image(buffer[faceX], 0, 0);
+          iRead = faceX;
+        }
+      } 
+      else {
+        if (buffer[iRead] != null) {
+          image(buffer[iRead], 0, 0);
+        }
+      }
+    } 
+    
+    else {
+      if (buffer[iRead] != null) {
+        image(buffer[iRead], 0, 0);
+      }
+    }
+
+
+    iWrite = (iWrite+1)%nFrames;
+    iRead = (iRead+1)%nFrames;
+    lastFaceX = faceX;
+    println(frameRate);
+  }
+}
